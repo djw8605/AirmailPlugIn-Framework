@@ -121,8 +121,10 @@ const NSString *ampcss_render_css_option   = @"ampcss_render_css_option";
     if(self.cssString.length == 0 || !message)
         return html;
     
-    NSString *htmlRet = [NSString stringWithFormat:@"<style>%@</style>%@",self.cssString,html];
-    return htmlRet;
+    NSLog(@"Inside RenderFromHTML");
+    //NSString *htmlRet = [NSString stringWithFormat:@"<style>%@</style>%@",self.cssString,html];
+    //NSString *htmlRet = [NSString stringWithFormat:@"<style>body{color:blue;}</style>%@",html];
+    return html;
 }
 
 #pragma mark - manage css
@@ -158,6 +160,23 @@ const NSString *ampcss_render_css_option   = @"ampcss_render_css_option";
     }
     [self SavePreferences];
     
+}
+
+//USED BY AM TO CHANGE THE RFC BEFORE SENDING
+- (AMPSendResult*) ampStackSendRfc:(NSString*)rfc composer:(AMPComposerInfo*)info
+{
+    AMPSendResult *sr   = [AMPSendResult new];
+    sr.result           = AMP_SEND_RESULT_SUCCESS;
+    
+    NSLog(@"Hello From Derek's Plugin");
+    NSError *error = nil;
+    
+    // Search for the font-family, and remove it.
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"font-family.*;" options:NSRegularExpressionCaseInsensitive error:&error];
+    NSString *modifiedString = [regex stringByReplacingMatchesInString:rfc options:0 range:NSMakeRange(0, [rfc length]) withTemplate:@""];
+    //NSLog(@"%@", modifiedString);
+    sr.rfc = modifiedString;
+    return sr;
 }
 
 
